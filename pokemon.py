@@ -1,7 +1,7 @@
 __all__ = ["Pokemon"]
 
 
-class Pokemon:
+class Pokemon():
     def __init__(self, name, atk, df):
         self.name = name
         self.atk = atk
