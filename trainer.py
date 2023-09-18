@@ -1,18 +1,8 @@
 import pygame
 from poketypes import *
 
-__all__ = ["Trainer"]
+__all__ = ["Trainer", "SmartTrainer"]
 
-
-# def drawText(surface, color, text, where, font_name = "Arial", font_size = 16):
-#     font = pygame.font.SysFont(font_name, font_size)
-#     text_surface = font.render(text, True, color)
-#     text_rect = text_surface.get_rect()
-#     if type(where) is pygame.Rect:
-#         text_rect.center = where.center
-#     else:
-#         text_rect.topleft = where
-#     surface.blit(text_surface, text_rect)
 
 class Trainer(pygame.sprite.Sprite):
     def __init__(self, x=0, y=0):
@@ -27,7 +17,6 @@ class Trainer(pygame.sprite.Sprite):
         self.box += [pokemon]
 
     def best_team(self, n):
-        # TODO: find a better algorithm
         team = self.box[:n]
         self.box = self.box[n:]
         return team
@@ -42,8 +31,16 @@ class Trainer(pygame.sprite.Sprite):
         font = pygame.font.Font("haxrcorp-4089.ttf", 16)
 
         n = 0
-        for i in ["Wins: " + str(self.wins), "Pokemon: " + str(len(self.box)), *map(lambda x: x.name, self.box)]:
+        for i in ["Wins: " + str(self.wins), "Pokemon: " + str(len(self.box)), *map(lambda x: f"{x.name} A{x.atk} D{x.df}", self.box)]:
             text_surface = font.render(i, True, pygame.Color(255, 0, 0))
             surface.blit(text_surface, (100, n * 20 + 5))
-            # drawText(surface, pygame.Color(0,0,0), i, (self.x + 100, n * 20 + 5))
             n += 1
+
+
+class SmartTrainer(Trainer):
+    def best_team(self, n):
+        box = sorted(self.box, key=lambda x: (x.atk * 1.5 + x.df)
+                     * (0.75 if type(x) == FirePokemon else 1), reverse=True)
+        team = box[:n]
+        self.box = box[n:]
+        return team
