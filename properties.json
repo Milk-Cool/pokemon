@@ -4,5 +4,5 @@
     "spriteSize": 200,
     "fps": 60,
     "port": 7801,
-    "host": "*"
+    "host": ""
 }
