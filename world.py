@@ -6,7 +6,7 @@ from properties import *
 WORLD_W = props["width"]
 WORLD_H = props["height"]
 WORLD_SPRITE_SIZE = props["spriteSize"]
-WORLD_POKEMON_COUNT = 15
+WORLD_POKEMON_COUNT = (props["width"] * props["height"]) // 100000 if props["autoCount"] else 15
 
 
 class World:

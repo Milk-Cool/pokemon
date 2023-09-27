@@ -3,8 +3,11 @@ import pygame
 
 __all__ = ["Pokemon"]
 
+current_id = 0
+
 class Pokemon(pygame.sprite.Sprite):
     def __init__(self, name, atk, df, x, y):
+        global current_id
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load(
             f"assets/{type(self).__name__}.png").convert()
@@ -21,6 +24,8 @@ class Pokemon(pygame.sprite.Sprite):
         self.y = y
         self.vx = 0
         self.vy = 0
+        self.id = current_id
+        current_id += 1
         while (self.vx == 0):
             self.vx = randint(-5, 5)
         while (self.vy == 0):

@@ -1,8 +1,9 @@
 {
-    "width": 1000,
+    "width": 800,
     "height": 1000,
     "spriteSize": 200,
     "fps": 60,
-    "port": 7804,
-    "host": ""
+    "port": 7803,
+    "host": "",
+    "autoCount": true
 }
