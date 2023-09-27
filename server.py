@@ -5,9 +5,9 @@ from world import *
 from properties import *
 
 import pygame
-import asyncio
 import threading
-from websockets.server import serve
+import socket
+import json
 
 
 # Создаем игру и окно
@@ -27,21 +27,49 @@ world = World()
 
 state = 0
 
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-async def server_handler(websocket):
-    async for message in websocket:
-        print(message)
+try:
+    sock.bind((props["host"], props["port"]))
+except socket.error as e:
+    print(str(e))
+
+sock.listen(2)
 
 
-async def server_main():
-    async with serve(server_handler, props["host"], props["port"]):
-        await asyncio.Future()
+def respond(conn, data):
+    print("S->C", data)
+    conn.sendall(data.encode("utf-8"))
+
+
+def handle_req(data):
+    resp = None
+    if (data["a"] == "q"):  # Запросить данные покемонов
+        resp = list(map(lambda x: [x.x, x.y, x.vx, x.vy, x.name,
+                   x.atk, x.df, x.hp], world.pokemon.sprites()))
+    return json.dumps(resp)
+
+
+def socket_handler():
+    while True:
+        # Сокеты
+        conn, addr = sock.accept()
+        with conn:
+            print(f"Connected by {addr}")
+            while True:
+                data = conn.recv(1024)  # Up to 1024 bytes
+                if not data:
+                    break
+                data_str = str(data, "utf-8")
+                print("C->S", data_str)
+                data_json = json.loads(data_str)
+                resp = handle_req(data_json)
+                respond(conn, resp)
 
 
 def main():
+    threading.Thread(target=socket_handler, daemon=True).start()
     running = True
-    thread = threading.Thread(target=asyncio.run, args=(server_main(),), daemon=True)
-    thread.start()
     while running:
         for e in pygame.event.get():
             if e.type == pygame.QUIT:
