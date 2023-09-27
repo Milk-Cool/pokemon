@@ -1,11 +1,12 @@
 from random import choice, randint
 from poketypes import *
 import pygame
+from properties import *
 
-WORLD_W = 800
-WORLD_H = 600
-WORLD_SPRITE_SIZE = 200
-WORLD_POKEMON_COUNT = 20
+WORLD_W = props["width"]
+WORLD_H = props["height"]
+WORLD_SPRITE_SIZE = props["spriteSize"]
+WORLD_POKEMON_COUNT = 15
 
 
 class World:
@@ -19,13 +20,13 @@ class World:
         self.generate_pokemon()
 
     def generate_pokemon(self):
-        for i in range(self.max_pokemon):
-            poketype = choice(FirePokemon, GrassPokemon,
-                              WaterPokemon, ElectricPokemon)
-            name = choice("Beacross", "Elesaur", "Salamoth", "Penguzz", "Steelzelle", "Slowmeleon", "Ironopotamus", "Bellosaur", "Potatoad",
-                          "Scorpike", "Chimpaly", "Barrapod", "Dracung", "Hyenaring", "Hypepion", "Horromite", "Hyparos", "Magicacle", "Flyte", "Manateeth")
+        for _ in range(self.max_pokemon):
+            poketype = choice([FirePokemon, GrassPokemon,
+                              WaterPokemon, ElectricPokemon])
+            name = choice(["Beacross", "Elesaur", "Salamoth", "Penguzz", "Steelzelle", "Slowmeleon", "Ironopotamus", "Bellosaur", "Potatoad",
+                          "Scorpike", "Chimpaly", "Barrapod", "Dracung", "Hyenaring", "Hypepion", "Horromite", "Hyparos", "Magicacle", "Flyte", "Manateeth"])
             self.pokemon.add(poketype(name, randint(5, 20), randint(5, 20), randint(
-                0, WORLD_W - WORLD_SPRITE_SIZE), randint(0, WORLD_H - WORLD_SPRITE_SIZE)))
+                0, WORLD_W - WORLD_SPRITE_SIZE), randint(WORLD_SPRITE_SIZE, WORLD_H - WORLD_SPRITE_SIZE)))
 
     def draw(self, surface):
         surface.set_clip(self.rect)
@@ -35,9 +36,10 @@ class World:
         for pokemon in self.pokemon.sprites():
             if (pokemon.x <= 0):
                 pokemon.vx = abs(pokemon.vx)
-            if (pokemon.y <= 0):
+            if (pokemon.y <= WORLD_SPRITE_SIZE):
                 pokemon.vy = abs(pokemon.vy)
             if (pokemon.x >= WORLD_W - WORLD_SPRITE_SIZE):
                 pokemon.vx = -abs(pokemon.vx)
             if (pokemon.y >= WORLD_H - WORLD_SPRITE_SIZE):
                 pokemon.vy = -abs(pokemon.vy)
+            pokemon.update()
