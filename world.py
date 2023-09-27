@@ -10,14 +10,15 @@ WORLD_POKEMON_COUNT = 15
 
 
 class World:
-    def __init__(self):
+    def __init__(self, gen=True):
         self.w = WORLD_W
         self.h = WORLD_H
         self.sprite_size = WORLD_SPRITE_SIZE
         self.max_pokemon = WORLD_POKEMON_COUNT
         self.pokemon = pygame.sprite.Group()
         self.rect = pygame.Rect(0, 0, WORLD_W, WORLD_H)
-        self.generate_pokemon()
+        if (gen):
+            self.generate_pokemon()
 
     def generate_pokemon(self):
         for _ in range(self.max_pokemon):
