@@ -47,7 +47,7 @@ def handle_req(data):
     if (data["a"] == "q"):  # Запросить данные покемонов
         resp = list(map(lambda x: [x.x, x.y, x.vx, x.vy, x.name,
                    x.atk, x.df, x.hp], world.pokemon.sprites()))
-    return json.dumps(resp)
+    return json.dumps(resp, separators=(",", ":"))
 
 
 def socket_handler():
