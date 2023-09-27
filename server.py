@@ -34,7 +34,7 @@ async def server_handler(websocket):
 
 
 async def server_main():
-    async with serve(server_handler, "", props["port"]):
+    async with serve(server_handler, props["host"], props["port"]):
         await asyncio.Future()
 
 
