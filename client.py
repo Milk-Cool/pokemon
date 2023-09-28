@@ -95,22 +95,22 @@ def handle_res(data):
                 for i in world.pokemon.sprites():
                     if (i.id == event_data[0]):
                         i.kill()
-            elif(event[0] == "update_hp"):
+            elif (event[0] == "update_hp"):
                 flag = True
                 for i in trainer_pokemon_battle.sprites():
-                    if(i.id == event_data[0]):
+                    if (i.id == event_data[0]):
                         i.hp = event_data[1]
-                        if(i.hp == 0):
+                        if (i.hp == 0):
                             i.kill()
                         flag = False
-                if(flag):
+                if (flag):
                     for i in opponent_pokemon_battle.sprites():
-                        if(i.id == event_data[0]):
+                        if (i.id == event_data[0]):
                             i.hp = event_data[1]
-                            if(i.hp == 0):
+                            if (i.hp == 0):
                                 i.kill()
                             flag = False
-    elif(data["a"] == "f"):
+    elif (data["a"] == "f"):
         trainer_pokemon_battle.empty()
         trainer_pokemon_battle.add(*array_to_poke(data["d"][1]))
         opponent_pokemon_battle.empty()
@@ -123,10 +123,10 @@ def main():
     threading.Thread(target=update_loop, daemon=True).start()
     running = True
     while running:
-        if(last_state != state):
-            if(state == 0):
+        if (last_state != state):
+            if (state == 0):
                 request({"a": "q"})
-            elif(state == 1):
+            elif (state == 1):
                 request({"a": "f"})
             last_state = state
 

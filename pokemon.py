@@ -5,17 +5,18 @@ __all__ = ["Pokemon"]
 
 current_id = 0
 
+
 class Pokemon(pygame.sprite.Sprite):
     def __init__(self, name, atk, df, x, y):
         global current_id
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load(
             f"assets/{type(self).__name__}.png").convert()
-        self.image.set_colorkey((255,0,255))
+        self.image.set_colorkey((255, 0, 255))
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = x, y
-        #self.rect.width = 400
-        #pygame.transform.scale(self.image, (400, 200))
+        # self.rect.width = 400
+        # pygame.transform.scale(self.image, (400, 200))
         self.name = name
         self.atk = atk
         self.df = df
@@ -60,7 +61,7 @@ class Pokemon(pygame.sprite.Sprite):
         pass
 
     def update(self, update_pos=True):
-        if(update_pos):
+        if (update_pos):
             self.x += self.vx
             self.y += self.vy
             self.rect.x, self.rect.y = self.x, self.y

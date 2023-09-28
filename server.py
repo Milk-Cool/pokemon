@@ -17,7 +17,8 @@ WIDTH = props["width"]
 HEIGHT = props["height"]
 pygame.init()
 pygame.mixer.init()
-screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.DOUBLEBUF|pygame.HWSURFACE)
+screen = pygame.display.set_mode(
+    (WIDTH, HEIGHT), pygame.DOUBLEBUF | pygame.HWSURFACE)
 pygame.display.set_caption("Pokémon")
 clock = pygame.time.Clock()
 
@@ -89,7 +90,7 @@ def handle_req(data):
     resp = None
     if (data["a"] == "q"):  # Отправить данные покемонов
         resp = list(map(poke_to_array, world.pokemon.sprites()))
-    elif(data["a"] == "f"): # Отправить данные битвы
+    elif (data["a"] == "f"):  # Отправить данные битвы
         trainer_pokemon_battle_ = pygame.sprite.Group()
         opponent_pokemon_battle_ = pygame.sprite.Group()
         for i in trainer_pokemon_battle.sprites():
@@ -102,7 +103,7 @@ def handle_req(data):
         for i in opponent_pokemon_battle_.sprites():
             i.x = WIDTH - props["spriteSize"] * 2 - i.x
         resp = [list(map(poke_to_array, trainer_pokemon_battle_.sprites())),
-            list(map(poke_to_array, opponent_pokemon_battle_.sprites()))]
+                list(map(poke_to_array, opponent_pokemon_battle_.sprites()))]
         trainer_pokemon_battle_.empty()
         opponent_pokemon_battle_.empty()
     elif (data["a"] == "u"):
@@ -117,10 +118,12 @@ def handle_req(data):
                 opponent.add(i)
                 if (len(world.pokemon.sprites()) == 0):
                     start_battle()
-    elif(data["a"] == "b"):
+    elif (data["a"] == "b"):
         resp = True
-        attacker = list(filter(lambda x: x.id == data["d"][0], opponent_pokemon_battle.sprites()))[0]
-        target = list(filter(lambda x: x.id == data["d"][1], trainer_pokemon_battle.sprites()))[0]
+        attacker = list(
+            filter(lambda x: x.id == data["d"][0], opponent_pokemon_battle.sprites()))[0]
+        target = list(
+            filter(lambda x: x.id == data["d"][1], trainer_pokemon_battle.sprites()))[0]
         attacker.attack(target)
         events += [["update_hp", target.id, target.hp]]
         side = 0
@@ -150,17 +153,17 @@ def main():
     running = True
     while running:
         for i in trainer_pokemon_battle.sprites():
-            if(i.hp == 0):
+            if (i.hp == 0):
                 i.kill()
         for i in opponent_pokemon_battle.sprites():
-            if(i.hp == 0):
+            if (i.hp == 0):
                 i.kill()
-        
-        if(state == 1 and len(trainer_pokemon_battle.sprites()) == 0):
+
+        if (state == 1 and len(trainer_pokemon_battle.sprites()) == 0):
             opponent.wins += 1
             state = 0
             world.generate_pokemon()
-        if(state == 1 and len(opponent_pokemon_battle.sprites()) == 0):
+        if (state == 1 and len(opponent_pokemon_battle.sprites()) == 0):
             trainer.wins += 1
             state = 0
             world.generate_pokemon()
@@ -188,8 +191,10 @@ def main():
                     for i in opponent_pokemon_battle.sprites():
                         if (e.pos[0] >= i.x and e.pos[0] <= i.x + props["spriteSize"] and e.pos[1] >= i.y and e.pos[1] <= i.y + props["spriteSize"]):
                             sel_opponent = i.id
-                            attacker = list(filter(lambda x: x.id == sel, trainer_pokemon_battle.sprites()))[0]
-                            target = list(filter(lambda x: x.id == sel_opponent, opponent_pokemon_battle.sprites()))[0]
+                            attacker = list(
+                                filter(lambda x: x.id == sel, trainer_pokemon_battle.sprites()))[0]
+                            target = list(
+                                filter(lambda x: x.id == sel_opponent, opponent_pokemon_battle.sprites()))[0]
                             attacker.attack(target)
                             events += [["update_hp", target.id, target.hp]]
                             sel = -1

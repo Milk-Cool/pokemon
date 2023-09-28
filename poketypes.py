@@ -1,6 +1,7 @@
 from pokemon import *
 from copy import copy
 
+
 class WaterPokemon(Pokemon):
     def attack(self, target):
         self_copy = copy(self)
