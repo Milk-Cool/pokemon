@@ -19,7 +19,7 @@ class Pokemon(pygame.sprite.Sprite):
         self.name = name
         self.atk = atk
         self.df = df
-        self.hp = 10
+        self.hp = 50
         self.x = x
         self.y = y
         self.vx = 0

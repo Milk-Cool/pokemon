@@ -8,6 +8,7 @@ import pygame
 import threading
 import socket
 import json
+from copy import copy
 
 
 # Создаем игру и окно
@@ -89,9 +90,22 @@ def handle_req(data):
     if (data["a"] == "q"):  # Отправить данные покемонов
         resp = list(map(poke_to_array, world.pokemon.sprites()))
     elif (data["a"] == "u"):
+        trainer_pokemon_battle_ = pygame.sprite.Group()
+        opponent_pokemon_battle_ = pygame.sprite.Group()
+        for i in trainer_pokemon_battle.sprites():
+            trainer_pokemon_battle_.add(copy(i))
+        for i in opponent_pokemon_battle.sprites():
+            opponent_pokemon_battle_.add(copy(i))
+        # Меняем колонки местами
+        for i in trainer_pokemon_battle_.sprites():
+            i.x = WIDTH - props["spriteSize"] * 2 - i.x
+        for i in opponent_pokemon_battle_.sprites():
+            i.x = WIDTH - props["spriteSize"] * 2 - i.x
         resp = [state, side, list(map(poke_to_array, world.pokemon.sprites())), [trainer.wins, list(map(poke_to_array, trainer.box))], [
-            opponent.wins, list(map(poke_to_array, opponent.box))], events, list(map(poke_to_array, trainer_pokemon_battle.sprites())),
-            list(map(poke_to_array, opponent_pokemon_battle.sprites()))]
+            opponent.wins, list(map(poke_to_array, opponent.box))], events, list(map(poke_to_array, trainer_pokemon_battle_.sprites())),
+            list(map(poke_to_array, opponent_pokemon_battle_.sprites()))]
+        trainer_pokemon_battle_.empty()
+        opponent_pokemon_battle_.empty()
         events = []
     elif (data["a"] == "r"):
         resp = True

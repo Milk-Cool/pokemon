@@ -29,6 +29,8 @@ opponent_pokemon_battle = pygame.sprite.Group()
 trainers = pygame.sprite.Group(trainer, opponent)
 world = World(False)
 
+draw_lock = False
+
 battle_state = 0
 state = 0
 last_state = 0
@@ -83,6 +85,7 @@ def handle_res(data):
         for i in array_to_poke(data["d"]):
             world.pokemon.add(i)
     elif (data["a"] == "u"):
+        draw_lock = True
         state = data["d"][0]
         side = 1 - data["d"][1]
         trainer.wins = data["d"][4][0]
@@ -99,15 +102,11 @@ def handle_res(data):
         trainer_pokemon_battle.add(*array_to_poke(data["d"][7]))
         opponent_pokemon_battle.empty()
         opponent_pokemon_battle.add(*array_to_poke(data["d"][6]))
-        # Меняем колонки местами
-        for i in trainer_pokemon_battle.sprites():
-            i.x = WIDTH - props["spriteSize"] * 2 - i.x
-        for i in opponent_pokemon_battle.sprites():
-            i.x = WIDTH - props["spriteSize"] * 2 - i.x
+        draw_lock = False
 
 
 def main():
-    global events, state, side, battle_state, sel, sel_opponent, last_state
+    global events, state, side, battle_state, sel, sel_opponent, last_state, draw_lock
     request({"a": "q"})
     threading.Thread(target=update_loop, daemon=True).start()
     running = True
@@ -145,6 +144,9 @@ def main():
                             sel_opponent = -1
                             battle_state = 0
                             break
+
+        if(draw_lock):
+            continue
 
         # Рендеринг
         screen.fill((0, 0, 0))
