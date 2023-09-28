@@ -27,7 +27,7 @@ class World:
                               WaterPokemon, ElectricPokemon])
             name = choice(["Beacross", "Elesaur", "Salamoth", "Penguzz", "Steelzelle", "Slowmeleon", "Ironopotamus", "Bellosaur", "Potatoad",
                           "Scorpike", "Chimpaly", "Barrapod", "Dracung", "Hyenaring", "Hypepion", "Horromite", "Hyparos", "Magicacle", "Flyte", "Manateeth"])
-            self.pokemon.add(poketype(name, randint(5, 20), randint(5, 20), randint(
+            self.pokemon.add(poketype(name, randint(10, 20), randint(5, 15), randint(
                 0, WORLD_W - WORLD_SPRITE_SIZE), randint(WORLD_SPRITE_SIZE, WORLD_H - WORLD_SPRITE_SIZE)))
 
     def draw(self, surface):
