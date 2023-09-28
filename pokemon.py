@@ -19,7 +19,7 @@ class Pokemon(pygame.sprite.Sprite):
         self.name = name
         self.atk = atk
         self.df = df
-        self.hp = 100
+        self.hp = 10
         self.x = x
         self.y = y
         self.vx = 0
@@ -54,15 +54,16 @@ class Pokemon(pygame.sprite.Sprite):
         if (self.hp == 0):
             return
         target.hp = max(
-            0, target.hp - max(self_copy.get_atk() - target_copy.get_def(), 0))
+            0, target.hp - max(self_copy.get_atk() - target_copy.get_def(), 1))
 
     def draw(self, surface):
         pass
 
-    def update(self):
-        self.x += self.vx
-        self.y += self.vy
-        self.rect.x, self.rect.y = self.x, self.y
+    def update(self, update_pos=True):
+        if(update_pos):
+            self.x += self.vx
+            self.y += self.vy
+            self.rect.x, self.rect.y = self.x, self.y
 
         surface = self.image
         surface.blit(pygame.image.load(
@@ -71,7 +72,7 @@ class Pokemon(pygame.sprite.Sprite):
         font = pygame.font.Font("haxrcorp-4089.ttf", 32)
 
         n = 0
-        for i in [self.name, f"A{self.atk} D{self.df}"]:
+        for i in [self.name, f"HP {self.hp}", f"A{self.atk} D{self.df}"]:
             text_surface = font.render(i, True, pygame.Color(255, 0, 0))
             surface.blit(text_surface, (205, n * 40))
             n += 1
