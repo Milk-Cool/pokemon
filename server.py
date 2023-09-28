@@ -89,7 +89,7 @@ def handle_req(data):
     resp = None
     if (data["a"] == "q"):  # Отправить данные покемонов
         resp = list(map(poke_to_array, world.pokemon.sprites()))
-    elif (data["a"] == "u"):
+    elif(data["a"] == "f"): # Отправить данные битвы
         trainer_pokemon_battle_ = pygame.sprite.Group()
         opponent_pokemon_battle_ = pygame.sprite.Group()
         for i in trainer_pokemon_battle.sprites():
@@ -101,11 +101,13 @@ def handle_req(data):
             i.x = WIDTH - props["spriteSize"] * 2 - i.x
         for i in opponent_pokemon_battle_.sprites():
             i.x = WIDTH - props["spriteSize"] * 2 - i.x
-        resp = [state, side, list(map(poke_to_array, world.pokemon.sprites())), [trainer.wins, list(map(poke_to_array, trainer.box))], [
-            opponent.wins, list(map(poke_to_array, opponent.box))], events, list(map(poke_to_array, trainer_pokemon_battle_.sprites())),
+        resp = [list(map(poke_to_array, trainer_pokemon_battle_.sprites())),
             list(map(poke_to_array, opponent_pokemon_battle_.sprites()))]
         trainer_pokemon_battle_.empty()
         opponent_pokemon_battle_.empty()
+    elif (data["a"] == "u"):
+        resp = [state, side, list(map(poke_to_array, world.pokemon.sprites())), [trainer.wins, list(map(poke_to_array, trainer.box))], [
+            opponent.wins, list(map(poke_to_array, opponent.box))], events]
         events = []
     elif (data["a"] == "r"):
         resp = True
@@ -117,8 +119,10 @@ def handle_req(data):
                     start_battle()
     elif(data["a"] == "b"):
         resp = True
-        list(filter(lambda x: x.id == data["d"][0], opponent_pokemon_battle.sprites()))[0].attack(
-            list(filter(lambda x: x.id == data["d"][1], trainer_pokemon_battle.sprites()))[0])
+        attacker = list(filter(lambda x: x.id == data["d"][0], opponent_pokemon_battle.sprites()))[0]
+        target = list(filter(lambda x: x.id == data["d"][1], trainer_pokemon_battle.sprites()))[0]
+        attacker.attack(target)
+        events += [["update_hp", target.id, target.hp]]
         side = 0
     return json.dumps({"a": data["a"], "d": resp}, separators=(",", ":"))
 
@@ -184,8 +188,10 @@ def main():
                     for i in opponent_pokemon_battle.sprites():
                         if (e.pos[0] >= i.x and e.pos[0] <= i.x + props["spriteSize"] and e.pos[1] >= i.y and e.pos[1] <= i.y + props["spriteSize"]):
                             sel_opponent = i.id
-                            list(filter(lambda x: x.id == sel, trainer_pokemon_battle.sprites()))[0].attack(
-                                list(filter(lambda x: x.id == sel_opponent, opponent_pokemon_battle.sprites()))[0])
+                            attacker = list(filter(lambda x: x.id == sel, trainer_pokemon_battle.sprites()))[0]
+                            target = list(filter(lambda x: x.id == sel_opponent, opponent_pokemon_battle.sprites()))[0]
+                            attacker.attack(target)
+                            events += [["update_hp", target.id, target.hp]]
                             sel = -1
                             sel_opponent = -1
                             battle_state = 0

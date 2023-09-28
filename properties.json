@@ -3,7 +3,7 @@
     "height": 1000,
     "spriteSize": 200,
     "fps": 60,
-    "port": 7802,
+    "port": 7803,
     "host": "",
     "teamSize": 3,
     "autoCount": true

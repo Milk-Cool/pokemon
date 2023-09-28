@@ -29,8 +29,6 @@ opponent_pokemon_battle = pygame.sprite.Group()
 trainers = pygame.sprite.Group(trainer, opponent)
 world = World(False)
 
-draw_lock = False
-
 battle_state = 0
 state = 0
 last_state = 0
@@ -85,7 +83,6 @@ def handle_res(data):
         for i in array_to_poke(data["d"]):
             world.pokemon.add(i)
     elif (data["a"] == "u"):
-        draw_lock = True
         state = data["d"][0]
         side = 1 - data["d"][1]
         trainer.wins = data["d"][4][0]
@@ -98,15 +95,30 @@ def handle_res(data):
                 for i in world.pokemon.sprites():
                     if (i.id == event_data[0]):
                         i.kill()
+            elif(event[0] == "update_hp"):
+                flag = True
+                for i in trainer_pokemon_battle.sprites():
+                    if(i.id == event_data[0]):
+                        i.hp = event_data[1]
+                        if(i.hp == 0):
+                            i.kill()
+                        flag = False
+                if(flag):
+                    for i in opponent_pokemon_battle.sprites():
+                        if(i.id == event_data[0]):
+                            i.hp = event_data[1]
+                            if(i.hp == 0):
+                                i.kill()
+                            flag = False
+    elif(data["a"] == "f"):
         trainer_pokemon_battle.empty()
-        trainer_pokemon_battle.add(*array_to_poke(data["d"][7]))
+        trainer_pokemon_battle.add(*array_to_poke(data["d"][1]))
         opponent_pokemon_battle.empty()
-        opponent_pokemon_battle.add(*array_to_poke(data["d"][6]))
-        draw_lock = False
+        opponent_pokemon_battle.add(*array_to_poke(data["d"][0]))
 
 
 def main():
-    global events, state, side, battle_state, sel, sel_opponent, last_state, draw_lock
+    global events, state, side, battle_state, sel, sel_opponent, last_state
     request({"a": "q"})
     threading.Thread(target=update_loop, daemon=True).start()
     running = True
@@ -114,6 +126,8 @@ def main():
         if(last_state != state):
             if(state == 0):
                 request({"a": "q"})
+            elif(state == 1):
+                request({"a": "f"})
             last_state = state
 
         clock.tick(FPS)
@@ -144,9 +158,6 @@ def main():
                             sel_opponent = -1
                             battle_state = 0
                             break
-
-        if(draw_lock):
-            continue
 
         # Рендеринг
         screen.fill((0, 0, 0))
