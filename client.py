@@ -11,6 +11,8 @@ import json
 from time import sleep
 
 
+packet_lock = False
+
 # Создаем игру и окно
 FPS = props["fps"]
 WIDTH = props["width"]
@@ -68,10 +70,15 @@ def update_loop():
 
 
 def request(data):
+    global packet_lock
     data = json.dumps(data, separators=(",", ":"))
     print("C->S", data)
+    while (packet_lock):
+        sleep(0.01)
+    packet_lock = True
     sock.sendall(data.encode("utf-8"))
     resp = sock.recv(1024)
+    packet_lock = False
     resp = resp.decode("utf-8")
     print("S->C", resp)
     return handle_res(json.loads(resp))
