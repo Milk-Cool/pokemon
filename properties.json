@@ -1,10 +1,10 @@
 {
     "width": 1000,
     "height": 850,
-    "spriteSize": 200,
+    "spriteSize": 150,
     "fps": 60,
-    "port": 7803,
+    "port": 7804,
     "host": "",
-    "teamSize": 3,
+    "teamSize": 4,
     "autoCount": true
 }

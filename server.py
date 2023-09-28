@@ -26,7 +26,7 @@ clock = pygame.time.Clock()
 events = []
 
 trainer = SmartTrainer(0, 0)
-opponent = SmartTrainer(WIDTH - 200, 0)
+opponent = SmartTrainer(WIDTH - props["spriteSize"], 0)
 trainer_pokemon_battle = pygame.sprite.Group()
 opponent_pokemon_battle = pygame.sprite.Group()
 trainers = pygame.sprite.Group(trainer, opponent)
@@ -35,8 +35,8 @@ world = World()
 battle_state = 0
 state = 0
 side = 0
-sel = 0
-sel_opponent = 0
+sel = -1
+sel_opponent = -1
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -204,6 +204,7 @@ def main():
                             break
 
         # Рендеринг
+        sel_color = (240, 240, 240)
         screen.fill((0, 0, 0))
         trainers.draw(screen)
         if (state == 0):
@@ -218,6 +219,13 @@ def main():
         elif (state == 1):
             trainer_pokemon_battle.update()
             opponent_pokemon_battle.update()
+            pygame.draw.rect(screen, sel_color, pygame.Rect(
+                0 if side == 0 else WIDTH - props["spriteSize"], props["spriteSize"], props["spriteSize"], 5))
+            if (sel != -1):
+                sel_y = list(filter(lambda x: x.id == sel,
+                             trainer_pokemon_battle.sprites()))[0].y
+                pygame.draw.rect(screen, sel_color, pygame.Rect(
+                    0, sel_y + props["spriteSize"], props["spriteSize"], 5))
         # После отрисовки всего, переворачиваем экран
         pygame.display.flip()
         clock.tick(FPS)

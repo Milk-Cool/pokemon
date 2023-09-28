@@ -1,5 +1,6 @@
 from random import randint
 import pygame
+from properties import props
 
 __all__ = ["Pokemon"]
 
@@ -10,13 +11,12 @@ class Pokemon(pygame.sprite.Sprite):
     def __init__(self, name, atk, df, x, y):
         global current_id
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(
-            f"assets/{type(self).__name__}.png").convert()
+        self.genimage = lambda: pygame.transform.scale(pygame.image.load(
+            f"assets/{type(self).__name__}.png"), (props["spriteSize"] * 2, props["spriteSize"])).convert()
+        self.image = self.genimage()
         self.image.set_colorkey((255, 0, 255))
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = x, y
-        # self.rect.width = 400
-        # pygame.transform.scale(self.image, (400, 200))
         self.name = name
         self.atk = atk
         self.df = df
@@ -67,13 +67,14 @@ class Pokemon(pygame.sprite.Sprite):
             self.rect.x, self.rect.y = self.x, self.y
 
         surface = self.image
-        surface.blit(pygame.image.load(
-            f"assets/{type(self).__name__}.png").convert(), (0, 0))
+        surface.blit(self.genimage(), (0, 0))
 
-        font = pygame.font.Font("haxrcorp-4089.ttf", 32)
+        font = pygame.font.Font("haxrcorp-4089.ttf",
+                                int(32 * (props["spriteSize"] / 200)))
 
         n = 0
         for i in [self.name, f"HP {self.hp}", f"A{self.atk} D{self.df}"]:
             text_surface = font.render(i, True, pygame.Color(255, 0, 0))
-            surface.blit(text_surface, (205, n * 40))
+            surface.blit(
+                text_surface, (props["spriteSize"] + 5, n * (props["spriteSize"] // 5)))
             n += 1
